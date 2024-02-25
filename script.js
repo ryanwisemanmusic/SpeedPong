@@ -9,7 +9,11 @@ var DIRECTION = {
 var rounds = [5, 5, 3, 3, 2];
 var colors = ['#b0e0e6', '#20b2aa', '#daa520', '#ece6ff', '#ffc0cb'];
 
-let pongimact = new Audio('/src/sounds/pongimpact.mp3');
+let pongimact = new Audio ('/src/sounds/pongimpact.mp3');
+let gameover = new Audio ('/src/sounds/gameover.mp3');
+let gamestart = new Audio ('/src/sounds/gamestart.mp3')
+let gamewin = new Audio ('src/sounds/gamewin.mp3')
+let blip = new Audio ('/src/sounds/blip.mp3')
 
 var Ball = {
     new: function (incrementedSpeed) {
@@ -113,11 +117,10 @@ var Game = {
     update: function () {
         if (!this.over) {
             if (this.ball.x <= 0) Pong._resetTurn.call(this, this.ai, this.player);
-            
             if (this.ball.x >= this.canvas.width - this.ball.width) Pong._resetTurn.call(this, this.player, this.ai);
             if (this.ball.y <= 0) this.ball.moveY = DIRECTION.DOWN;
             if (this.ball.y >= this.canvas.height - this.ball.height) this.ball.moveY = DIRECTION.UP;
-            
+                
             
  
             if (this.player.move === DIRECTION.UP) this.player.y -= this.player.speed;
@@ -158,6 +161,8 @@ var Game = {
                 if (this.ball.y <= this.player.y + this.player.height && this.ball.y + this.ball.height >= this.player.y) {
                     this.ball.x = (this.player.x + this.ball.width);
                     this.ball.moveX = DIRECTION.RIGHT;
+                    blip.load();
+                    blip.play();
  
                 }
             }
@@ -166,6 +171,8 @@ var Game = {
                 if (this.ball.y <= this.ai.y + this.ai.height && this.ball.y + this.ball.height >= this.ai.y) {
                     this.ball.x = (this.ai.x - this.ball.width);
                     this.ball.moveX = DIRECTION.LEFT;
+                    blip.load();
+                    blip.play();
  
                 }
             }
@@ -174,12 +181,16 @@ var Game = {
         if (this.player.score === rounds[this.round]) {
             if (!rounds[this.round + 1]) {
                 this.over = true;
+                gamewin.load();
+                gamewin.play();
                 setTimeout(function () { Pong.endGameMenu('Winner!'); }, 1000);
             } else {
+                gamestart.load();
+                gamestart.play();
                 this.color = this._generateRoundColor();
                 this.player.score = this.ai.score = 0;
-                this.player.speed += 4;
-                this.ai.speed += 3.25;
+                this.player.speed += 2.3;
+                this.ai.speed += 1.985;
                 this.ball.speed += 2;
                 this.round += 1;
  
@@ -187,7 +198,8 @@ var Game = {
         }
         else if (this.ai.score === rounds[this.round]) {
             this.over = true;
-            
+            gameover.load();
+            gameover.play();
             setTimeout(function () { Pong.endGameMenu('Game Over!'); }, 1000);
         }
     },
@@ -276,7 +288,6 @@ var Game = {
     loop: function () {
         Pong.update();
         Pong.draw();
- 
         if (!Pong.over) requestAnimationFrame(Pong.loop);
     },
 
