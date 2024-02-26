@@ -10,6 +10,7 @@ var DIRECTION = {
 };
  
 var rounds = [5, 5, 3, 3, 2];
+//Personal color choices I used to create a better palette
 var colors = ['#b0e0e6', '#20b2aa', '#daa520', '#ece6ff', '#ffc0cb'];
 
 //Sound FX to be used
