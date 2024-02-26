@@ -1,3 +1,6 @@
+//Source code by Gabriel Dube
+//Modified by Ryan Wiseman to make Speed Pong
+
 var DIRECTION = {
     IDLE: 0,
     UP: 1,
@@ -9,6 +12,7 @@ var DIRECTION = {
 var rounds = [5, 5, 3, 3, 2];
 var colors = ['#b0e0e6', '#20b2aa', '#daa520', '#ece6ff', '#ffc0cb'];
 
+//Sound FX to be used
 let pongimact = new Audio ('/src/sounds/pongimpact.mp3');
 let gameover = new Audio ('/src/sounds/gameover.mp3');
 let gamestart = new Audio ('/src/sounds/gamestart.mp3')
@@ -24,6 +28,7 @@ var Ball = {
             y: (this.canvas.height / 2) - 9,
             moveX: DIRECTION.IDLE,
             moveY: DIRECTION.IDLE,
+            //Increased ball speed to fit baseline for SpeedPong
             speed: incrementedSpeed || 8,
 
         };
@@ -39,6 +44,7 @@ var Ai = {
             y: (this.canvas.height / 2) - 35,
             score: 0,
             move: DIRECTION.IDLE,
+            //This is player speed, (this.player is = to Ai.new.call)
             speed: 10,
             
         };
@@ -60,6 +66,8 @@ var Game = {
         this.ai = Ai.new.call(this, 'right');
         this.ball = Ball.new.call(this);
  
+        //Keeping a high enough speed for the AI, but not too drastic, 
+        //or else you are not winning this game of pong against a computer
         this.ai.speed = 6;
         this.running = this.over = false;
         this.turn = this.ai;
@@ -161,6 +169,7 @@ var Game = {
                 if (this.ball.y <= this.player.y + this.player.height && this.ball.y + this.ball.height >= this.player.y) {
                     this.ball.x = (this.player.x + this.ball.width);
                     this.ball.moveX = DIRECTION.RIGHT;
+                    //This is the sound for when the pong ball strikes a surface. Technically, you could do 2 sounds for direction left and right
                     blip.load();
                     blip.play();
  
@@ -171,6 +180,8 @@ var Game = {
                 if (this.ball.y <= this.ai.y + this.ai.height && this.ball.y + this.ball.height >= this.ai.y) {
                     this.ball.x = (this.ai.x - this.ball.width);
                     this.ball.moveX = DIRECTION.LEFT;
+                    //The blip sound is the least annoying of all sound effects I found, hence, it's use on both sides
+                    //Potential to create slight variation in the audio
                     blip.load();
                     blip.play();
  
@@ -181,6 +192,7 @@ var Game = {
         if (this.player.score === rounds[this.round]) {
             if (!rounds[this.round + 1]) {
                 this.over = true;
+                //if you win, congrats, gamewin sound
                 gamewin.load();
                 gamewin.play();
                 setTimeout(function () { Pong.endGameMenu('Winner!'); }, 1000);
@@ -198,6 +210,7 @@ var Game = {
         }
         else if (this.ai.score === rounds[this.round]) {
             this.over = true;
+            //if you lose, congrats, ur a loser sound
             gameover.load();
             gameover.play();
             setTimeout(function () { Pong.endGameMenu('Game Over!'); }, 1000);
